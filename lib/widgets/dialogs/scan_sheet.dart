@@ -20,92 +20,106 @@ class ScanSheet extends StatefulWidget {
 class _ScanSheetState extends State<ScanSheet> {
   @override
   Widget build(BuildContext context) {
-    return BottomSheet(
-      showDragHandle: true,
-      onClosing: () {},
-
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(children: [Text("Operations", style: labelMedium)]),
-              MainButton(
-                horizontalPadding: 0,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    CupertinoPageRoute(builder: (context) => QrScanner()),
-                  ).then((scannedValue) {
-                    if (scannedValue != null) {
-                      if (kDebugMode) {
-                        print("SCANNED VALUE : $scannedValue");
-                      }
-                      if (context.mounted) {
-                        Provider.of<InvoicesProvider>(context, listen: false)
-                            .validateCard({
-                              "uuid": scannedValue,
-                              "amount": 1000.toString(),
-                            })
-                            .then((valideateResponse) {
-                              if (valideateResponse.first) {
-                                if (context.mounted) {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    builder: (context) => CardBalanceSheet(
-                                      uuid: scannedValue,
-                                      balance: valideateResponse.last
-                                          .toString(),
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom + 24,
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(children: [Text("Operations", style: labelMedium)]),
+            MainButton(
+              horizontalPadding: 0,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  CupertinoPageRoute(builder: (context) => QrScanner()),
+                ).then((scannedValue) {
+                  if (scannedValue != null) {
+                    if (kDebugMode) print("SCANNED VALUE : $scannedValue");
+                    if (context.mounted) {
+                      Provider.of<InvoicesProvider>(context, listen: false)
+                          .validateCard({
+                            "uuid": scannedValue,
+                            "amount": "1000",
+                          })
+                          .then((valideateResponse) {
+                            if (valideateResponse.first) {
+                              if (context.mounted) {
+                                showModalBottomSheet(
+                                  isScrollControlled: true,
+                                  context: context,
+                                  builder: (context) => Padding(
+                                    padding: EdgeInsets.only(
+                                      bottom:
+                                          MediaQuery.of(
+                                            context,
+                                          ).viewInsets.bottom +
+                                          16,
+                                      left: 16,
+                                      right: 16,
+                                      top: 16,
                                     ),
-                                  );
-                                }
-                              } else {
-                                if (context.mounted) {
-                                  showCustomFlushBar(
-                                    context,
-                                    "Failed",
-                                    valideateResponse.last,
-                                    false,
-                                  );
-                                }
+                                    child: SingleChildScrollView(
+                                      child: CardBalanceSheet(
+                                        uuid: scannedValue,
+                                        balance: valideateResponse.last
+                                            .toString(),
+                                      ),
+                                    ),
+                                  ),
+                                );
                               }
-                            });
-                      }
+                            } else {
+                              if (context.mounted) {
+                                showCustomFlushBar(
+                                  context,
+                                  "Failed",
+                                  valideateResponse.last,
+                                  false,
+                                );
+                              }
+                            }
+                          });
                     }
-                  });
-                },
-                title: "Show Card",
-              ),
-
-              MainButton(
-                horizontalPadding: 0,
-
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    CupertinoPageRoute(builder: (context) => QrScanner()),
-                  ).then((scannedValue) {
-                    if (scannedValue != null) {
-                      if (kDebugMode) {
-                        print("SCANNED VALUE : $scannedValue");
-                      }
-                      if (context.mounted) {
-                        showModalBottomSheet(
-                          context: context,
-                          builder: (context) =>
-                              PlaceInvoiceSheet(cardUid: scannedValue),
-                        );
-                      }
+                  }
+                });
+              },
+              title: "Show Card",
+            ),
+            MainButton(
+              horizontalPadding: 0,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  CupertinoPageRoute(builder: (context) => QrScanner()),
+                ).then((scannedValue) {
+                  if (scannedValue != null) {
+                    if (kDebugMode) print("SCANNED VALUE : $scannedValue");
+                    if (context.mounted) {
+                      showModalBottomSheet(
+                        isScrollControlled: true,
+                        context: context,
+                        builder: (context) => Padding(
+                          padding: EdgeInsets.only(
+                            bottom:
+                                MediaQuery.of(context).viewInsets.bottom + 16,
+                          ),
+                          child: SingleChildScrollView(
+                            child: PlaceInvoiceSheet(cardUid: scannedValue),
+                          ),
+                        ),
+                      );
                     }
-                  });
-                },
-                title: "Place Invoice",
-              ),
-            ],
-          ),
-        );
-      },
+                  }
+                });
+              },
+              title: "Place Invoice",
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
