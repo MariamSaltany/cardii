@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import 'package:saees_cards/helpers/consts.dart';
 import 'package:saees_cards/helpers/functions_helper.dart';
@@ -18,7 +17,6 @@ class TabsScreen extends StatefulWidget {
 
 class _TabsScreenState extends State<TabsScreen> {
   int currentIndex = 0;
-
   List<String> uploadedImages = [];
 
   @override
@@ -34,18 +32,17 @@ class _TabsScreenState extends State<TabsScreen> {
               width: getSize(context).width * 0.2,
             ),
           ),
-          body: AnimatedSwitcher(
-            duration: 300.ms,
-            child: currentIndex == 0 ? WalletContent() : InvoicesContent(),
+          // ✅ FIXED: IndexedStack preserves invoices state
+          body: IndexedStack(
+            index: currentIndex,
+            children: const [WalletContent(), InvoicesContent()],
           ),
           bottomNavigationBar: BottomNavigationBar(
             selectedItemColor: primaryColor,
             unselectedItemColor: Colors.grey,
             selectedLabelStyle: labelSmall.copyWith(color: primaryColor),
             unselectedLabelStyle: labelSmall.copyWith(color: primaryColor),
-
             currentIndex: currentIndex,
-
             onTap: (value) {
               setState(() {
                 currentIndex = value;
@@ -62,7 +59,6 @@ class _TabsScreenState extends State<TabsScreen> {
               ),
             ],
           ),
-
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerDocked,
           floatingActionButton: FloatingActionButton(
