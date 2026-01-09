@@ -92,6 +92,4 @@ class AuthProvider extends BaseProvider {
       return [false, json.decode(response.body)["message"]];
     }
   }
-
-
 }

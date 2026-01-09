@@ -4,6 +4,7 @@ import 'package:saees_cards/helpers/consts.dart';
 import 'package:saees_cards/helpers/functions_helper.dart';
 import 'package:saees_cards/providers/auth_provider.dart';
 import 'package:saees_cards/screens/main_screens/tabs_content/invoices_content.dart';
+import 'package:saees_cards/screens/main_screens/tabs_content/transactions_content.dart';
 import 'package:saees_cards/screens/main_screens/tabs_content/wallet_content.dart';
 import 'package:saees_cards/widgets/dialogs/custom_drawer.dart';
 import 'package:saees_cards/widgets/dialogs/scan_sheet.dart';
@@ -32,16 +33,19 @@ class _TabsScreenState extends State<TabsScreen> {
               width: getSize(context).width * 0.2,
             ),
           ),
-          // ✅ FIXED: IndexedStack preserves invoices state
           body: IndexedStack(
             index: currentIndex,
-            children: const [WalletContent(), InvoicesContent()],
+            children: const [
+              WalletContent(),
+              TransactionsContent(),
+              InvoicesContent(),
+            ],
           ),
           bottomNavigationBar: BottomNavigationBar(
             selectedItemColor: primaryColor,
             unselectedItemColor: Colors.grey,
             selectedLabelStyle: labelSmall.copyWith(color: primaryColor),
-            unselectedLabelStyle: labelSmall.copyWith(color: primaryColor),
+            unselectedLabelStyle: labelSmall.copyWith(color: Colors.grey),
             currentIndex: currentIndex,
             onTap: (value) {
               setState(() {
@@ -52,6 +56,10 @@ class _TabsScreenState extends State<TabsScreen> {
               BottomNavigationBarItem(
                 label: "Wallet",
                 icon: Icon(Icons.wallet),
+              ),
+              BottomNavigationBarItem(
+                label: "Transactions",
+                icon: Icon(Icons.history),
               ),
               BottomNavigationBarItem(
                 label: "Invoices",
